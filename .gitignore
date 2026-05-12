@@ -4,3 +4,5 @@ uploads/images/*
 uploads/qr/*
 !uploads/images/.gitkeep
 !uploads/qr/.gitkeep
+seed.js
+swagger.js
