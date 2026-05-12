@@ -1,0 +1,6 @@
+node_modules/
+.env
+uploads/images/*
+uploads/qr/*
+!uploads/images/.gitkeep
+!uploads/qr/.gitkeep
