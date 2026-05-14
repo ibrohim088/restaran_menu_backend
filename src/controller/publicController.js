@@ -2,6 +2,16 @@ import Restaurant from '../schema/Restaran.js';
 import Category from '../schema/Category.js';
 import MenuItem from '../schema/MenuItem.js';
 
+// GET /public/restaurants — faol restoranlar ro'yxati
+const getPublicRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find({ isActive: true }).select('name description address phone logoUrl coverUrl instagram telegram workingHours qrCodeUrl');
+    res.json({ success: true, data: restaurants });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // GET /public/menu/:restaurantId  — to'liq menyu
 const getPublicMenu = async (req, res) => {
   try {
@@ -44,4 +54,4 @@ const getPublicCategories = async (req, res) => {
   }
 };
 
-export { getPublicMenu, getPublicCategories };
+export { getPublicRestaurants, getPublicMenu, getPublicCategories };
