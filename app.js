@@ -20,12 +20,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express()
-// app.use(cors('http://localhost:5173/'))
+app.use(cors('http://localhost:5173/'))
 
-app.use(cors({
-  origin: true, // yoki aniq frontend URL
-  credentials: true
-}))
+// app.use(cors({
+//   origin: true, // yoki aniq frontend URL
+//   credentials: true
+// }))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -42,8 +42,8 @@ app.use(errorHandler);
 setupSwagger(app)
 
 db()
-// app.listen(config.PORT, () => {
-//   console.log(`Server is running at port: ${config.PORT}`);
-// })
+app.listen(config.PORT, () => {
+  console.log(`Server is running at port: ${config.PORT}`);
+})
 
-export default app;
+// export default app;
