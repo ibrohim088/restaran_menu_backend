@@ -208,7 +208,6 @@ const options = {
 
 const swaggerSpec = swaggerJsdoc(options);
 
-// ✅ CDN ishlatiladi — Vercel va localhost ikkalasida ham ishlaydi
 const swaggerUiOptions = {
   customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css',
   customJs: [
