@@ -1,0 +1,108 @@
+graph TD
+    %% ==================== ASOSIY STRUKTURA ====================
+    Root["📁 b-menu (Root)"] 
+    
+    subgraph Root
+        App[app.js]:::main
+        Package[package.json]:::config
+        Env[.env]:::hidden
+        Vercel[vercel.json]:::config
+        Swagger[swagger.js]:::config
+        Seed[seed.js]:::config
+    end
+
+    %% ==================== SRC PAPKASI ====================
+    subgraph Src["📂 src (Asosiy kod)"]
+        direction TB
+        
+        subgraph Config["⚙️ Config & Utils"]
+            ConfigFile[shared/config.js]
+            Token[util/createToken.js]
+            DB[db/index.js]
+        end
+        
+        subgraph Middleware["🛡️ Middleware"]
+            Auth[auth.js]
+            Upload[upload.js]
+            Error[erorrHandler.js]
+        end
+        
+        subgraph Schemas["📊 MongoDB Schemas"]
+            User[User.js]
+            Restaran[Restaran.js]
+            Category[Category.js]
+            MenuItem[MenuItem.js]
+        end
+        
+        subgraph Controllers["🎮 Controllers"]
+            AuthCtrl[authController.js]
+            AdminCtrl[adminController.js]
+            RestaranCtrl[restaranController.js]
+            CategoryCtrl[categoryController.js]
+            MenuCtrl[menuController.js]
+            PublicCtrl[publicController.js]
+        end
+        
+        subgraph Routers["🛣️ Routers"]
+            AuthRouter[auth.js]
+            AdminRouter[admin.js]
+            RestaranRouter[restaran.js]
+            CategoryRouter[category.js]
+            MenuRouter[menu.js]
+            PublicRouter[public.js]
+        end
+        
+        subgraph Validators["✅ Validators"]
+            AuthVal[authValidator.js]
+            AdminVal[adminValidator.js]
+            RestVal[restaurantValidator.js]
+            CatVal[categoryValidator.js]
+            MenuVal[menuValidator.js]
+        end
+    end
+
+    %% ==================== ULANISHLAR ====================
+    App ---> AuthRouter
+    App --> AdminRouter
+    App --> RestaranRouter
+    App --> CategoryRouter
+    App --> MenuRouter
+    App --> PublicRouter
+
+    AuthRouter --> AuthCtrl
+    AdminRouter --> AdminCtrl
+    RestaranRouter --> RestaranCtrl
+    CategoryRouter --> CategoryCtrl
+    MenuRouter --> MenuCtrl
+    PublicRouter --> PublicCtrl
+
+    AuthCtrl --> User
+    AdminCtrl --> User
+    RestaranCtrl --> Restaran
+    CategoryCtrl --> Category
+    MenuCtrl --> MenuItem
+    PublicCtrl --> Restaran & Category & MenuItem
+
+    AuthCtrl & AdminCtrl & RestaranCtrl & CategoryCtrl & MenuCtrl --> Auth
+    RestaranCtrl & CategoryCtrl & MenuCtrl --> Upload
+
+    AuthCtrl & AdminCtrl & RestaranCtrl & CategoryCtrl & MenuCtrl & PublicCtrl --> ConfigFile
+    AuthCtrl & AdminCtrl --> Token
+    AllControllers[Controllers] --> DB
+
+    %% ==================== RANG VA USLUBLAR ====================
+    classDef main fill:#312e81, stroke:#6366f1, stroke-width:4px, color:#fff, rx:20, ry:20
+    classDef config fill:#1e2937, stroke:#64748b, color:#e2e8f0
+    classDef router fill:#4338ca, stroke:#818cf8, color:#fff
+    classDef ctrl fill:#c2410c, stroke:#fb923c, color:#fff
+    classDef model fill:#166534, stroke:#4ade80, color:#fff
+    classDef mw fill:#9f1239, stroke:#fb7185, color:#fff
+    classDef hidden fill:#334155, stroke:#64748b, color:#94a3b8
+    
+    class App main
+    class Package,Vercel,Swagger,Seed,ConfigFile,Token,DB config
+    class Env hidden
+    class AuthRouter,AdminRouter,RestaranRouter,CategoryRouter,MenuRouter,PublicRouter router
+    class AuthCtrl,AdminCtrl,RestaranCtrl,CategoryCtrl,MenuCtrl,PublicCtrl ctrl
+    class User,Restaran,Category,MenuItem model
+    class Auth,Upload,Error mw
