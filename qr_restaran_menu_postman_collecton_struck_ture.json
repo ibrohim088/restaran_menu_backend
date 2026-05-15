@@ -1,0 +1,454 @@
+{
+  "info": {
+    "name": "QR Restoran Menyu API - To'liq",
+    "description": "QR Restoran Menyu Backend - SuperAdmin va Admin uchun to'liq collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "🔑 Super Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.environment.set('TOKEN', res.accessToken);",
+                  "    pm.environment.set('REFRESH_TOKEN', res.refreshToken);",
+                  "    console.log('✅ Super Admin Token saqlandi');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔑 Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.environment.set('ADMIN_TOKEN', res.accessToken);",
+                  "    pm.environment.set('ADMIN_REFRESH_TOKEN', res.refreshToken);",
+                  "    console.log('✅ Admin Token saqlandi');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Refresh Token (Super)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{REFRESH_TOKEN}}\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/refresh"
+          }
+        },
+        {
+          "name": "POST Refresh Token (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{ADMIN_REFRESH_TOKEN}}\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/refresh"
+          }
+        },
+        {
+          "name": "GET Me (Super Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/me"
+          }
+        },
+        {
+          "name": "GET Me (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/me"
+          }
+        },
+        {
+          "name": "POST Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Admins (Super Admin)",
+      "item": [
+        {
+          "name": "GET All Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins"
+          }
+        },
+        {
+          "name": "POST Create Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Test Admin\",\n  \"email\": \"testadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/admins"
+          }
+        },
+        {
+          "name": "GET Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        },
+        {
+          "name": "PUT Update Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Admin\"\n}"
+            },
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        },
+        {
+          "name": "DELETE Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}/toggle"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏪 Restaurants",
+      "item": [
+        {
+          "name": "GET My Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran"
+          }
+        },
+        {
+          "name": "POST Create Restaurant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "My Restoran",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Tavsif",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/restaran"
+          }
+        },
+        {
+          "name": "GET Restaurant by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "POST Generate QR Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}/qr"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📂 Categories",
+      "item": [
+        {
+          "name": "GET Categories by Restaurant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/restaurants/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "POST Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Burger",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/categories/restaurants/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/{{categoryId}}/toggle"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🍔 Menu Items",
+      "item": [
+        {
+          "name": "GET Menu by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "POST Create Menu Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Cheese Burger",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "45000",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/menu/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Menu Item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/{{menuId}}/toggle"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌍 Public",
+      "item": [
+        {
+          "name": "GET Public Menu",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/public/menu/{{restaurantId}}"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
