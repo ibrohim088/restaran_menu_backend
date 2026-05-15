@@ -128,5 +128,6 @@ export const setupSwagger = (app) => {
 </html>`);
   });
 
+  console.log('');
   console.log('Swagger UI: ' + config.BASE_URL + '/api-docs');
 };
