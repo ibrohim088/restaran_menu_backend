@@ -4,6 +4,7 @@ import QRCode from 'qrcode';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { getIPv4 } from '../db/network.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -98,17 +99,19 @@ const generateQR = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Restoran topilmadi' });
     }
 
-    let frontendBaseUrl;
+    // So'rov localhost dan kelganmi yoki network IP dan?
+    // Shunga qarab to'g'ri frontend URL tanlanadi
+    const requestHost = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    const isLocalRequest = requestHost.includes('127.0.0.1') || requestHost.includes('::1') || requestHost.includes('localhost');
 
-    if (process.env.FRONTEND_URL) {
-      frontendBaseUrl = process.env.FRONTEND_URL;
-    }
-    else if (req.headers.host) {
-      frontendBaseUrl = `http://${req.headers.host}`;
-    }
-    else {
-      const networkIP = getLocalNetworkIP();
-      frontendBaseUrl = `http://${networkIP}:5173`;
+    let frontendBaseUrl;
+    if (isLocalRequest) {
+      // Brauzer localhost dan — localhost URL
+      frontendBaseUrl = config.FRONT_BASE_URL || 'http://localhost:5173';
+    } else {
+      // Telefon yoki boshqa qurilma — network IP URL
+      const networkIP = getIPv4();
+      frontendBaseUrl = config.FRONT_NETWORK_URL || `http://${networkIP}:5173`;
     }
 
     const menuUrl = `${frontendBaseUrl}/public/menu/${restaurant._id}`;
