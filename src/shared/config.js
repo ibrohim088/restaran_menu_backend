@@ -19,6 +19,9 @@ export default {
   NODE_ENV: process.env.NODE_ENV,
   BASE_URL: process.env.BASE_URL,
 
+  FRONT_BASE_URL: process.env.FRONT_BASE_URL,
+  FRONT_NETWORK_URL: process.env.FRONT_NETWORK_URL,
+
   PORT: process.env.PORT || 8000,
 
   JWT_SECRET_KEY: process.env.JWT_SECRET,

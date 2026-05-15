@@ -90,7 +90,7 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
-// POST /restaran/:id/qr
+// QR kod generatsiya qilish
 const generateQR = async (req, res) => {
   try {
     const restaurant = await Restaurant.findOne({ _id: req.params.id, adminId: req.user.id });
@@ -98,9 +98,21 @@ const generateQR = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Restoran topilmadi' });
     }
 
-    const menuUrl = `${config.BASE_URL}/public/menu/${restaurant._id}`;
+    let frontendBaseUrl;
 
-    // QR papkasini yaratish
+    if (process.env.FRONTEND_URL) {
+      frontendBaseUrl = process.env.FRONTEND_URL;
+    }
+    else if (req.headers.host) {
+      frontendBaseUrl = `http://${req.headers.host}`;
+    }
+    else {
+      const networkIP = getLocalNetworkIP();
+      frontendBaseUrl = `http://${networkIP}:5173`;
+    }
+
+    const menuUrl = `${frontendBaseUrl}/public/menu/${restaurant._id}`;
+
     const qrDir = path.join(__dirname, '../../uploads/qr');
     if (!fs.existsSync(qrDir)) fs.mkdirSync(qrDir, { recursive: true });
 
