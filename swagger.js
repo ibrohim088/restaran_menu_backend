@@ -25,7 +25,6 @@ const options = {
         },
       },
       schemas: {
-        // ─── AUTH ───────────────────────────────────────────────
         LoginRequest: {
           type: 'object',
           required: ['email', 'password'],
@@ -64,8 +63,6 @@ const options = {
             newPassword: { type: 'string', minLength: 6 },
           },
         },
-
-        // ─── RESTAURANT ─────────────────────────────────────────
         Restaurant: {
           type: 'object',
           properties: {
@@ -78,8 +75,6 @@ const options = {
             created_at: { type: 'string', format: 'date-time' },
           },
         },
-
-        // ─── CATEGORY ───────────────────────────────────────────
         Category: {
           type: 'object',
           properties: {
@@ -92,8 +87,6 @@ const options = {
             created_at: { type: 'string', format: 'date-time' },
           },
         },
-
-        // ─── MENU ITEM ──────────────────────────────────────────
         MenuItem: {
           type: 'object',
           properties: {
@@ -111,8 +104,6 @@ const options = {
             created_at: { type: 'string', format: 'date-time' },
           },
         },
-
-        // ─── ADMIN ──────────────────────────────────────────────
         Admin: {
           type: 'object',
           properties: {
@@ -124,8 +115,6 @@ const options = {
             created_at: { type: 'string', format: 'date-time' },
           },
         },
-
-        // ─── COMMON ─────────────────────────────────────────────
         SuccessMessage: {
           type: 'object',
           properties: {
@@ -142,349 +131,75 @@ const options = {
         },
       },
     },
-
-    // ─── PATHS ────────────────────────────────────────────────────
     paths: {
-
-      // ══ AUTH ══════════════════════════════════════════════════════
       '/auth/login': {
-        post: {
-          tags: ['Auth'],
-          summary: 'Tizimga kirish',
-          requestBody: {
-            required: true,
-            content: { 'application/json': { schema: { $ref: '#/components/schemas/LoginRequest' } } },
-          },
-          responses: {
-            200: { description: 'Muvaffaqiyatli kirish', content: { 'application/json': { schema: { $ref: '#/components/schemas/LoginResponse' } } } },
-            401: { description: 'Email yoki parol noto\'g\'ri', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
-          },
-        },
+        post: { tags: ['Auth'], summary: 'Tizimga kirish', requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/LoginRequest' } } } }, responses: { 200: { description: 'Muvaffaqiyatli kirish', content: { 'application/json': { schema: { $ref: '#/components/schemas/LoginResponse' } } } }, 401: { description: "Email yoki parol noto'g'ri" } } },
       },
       '/auth/refresh': {
-        post: {
-          tags: ['Auth'],
-          summary: 'Access tokenni yangilash',
-          requestBody: {
-            required: true,
-            content: { 'application/json': { schema: { type: 'object', properties: { refreshToken: { type: 'string' } } } } },
-          },
-          responses: {
-            200: { description: 'Yangi access token', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, accessToken: { type: 'string' } } } } } },
-            401: { description: 'Yaroqsiz refresh token' },
-          },
-        },
+        post: { tags: ['Auth'], summary: 'Access tokenni yangilash', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { refreshToken: { type: 'string' } } } } } }, responses: { 200: { description: 'Yangi access token' }, 401: { description: 'Yaroqsiz refresh token' } } },
       },
       '/auth/me': {
-        get: {
-          tags: ['Auth'],
-          summary: 'Joriy foydalanuvchi ma\'lumotlari',
-          security: [{ BearerAuth: [] }],
-          responses: {
-            200: { description: 'Foydalanuvchi ma\'lumotlari', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Admin' } } } } } },
-            401: { description: 'Token talab qilinadi' },
-          },
-        },
+        get: { tags: ['Auth'], summary: "Joriy foydalanuvchi ma'lumotlari", security: [{ BearerAuth: [] }], responses: { 200: { description: "Foydalanuvchi ma'lumotlari" }, 401: { description: 'Token talab qilinadi' } } },
       },
       '/auth/logout': {
-        post: {
-          tags: ['Auth'],
-          summary: 'Tizimdan chiqish',
-          security: [{ BearerAuth: [] }],
-          responses: {
-            200: { description: 'Muvaffaqiyatli chiqish', content: { 'application/json': { schema: { $ref: '#/components/schemas/SuccessMessage' } } } },
-          },
-        },
+        post: { tags: ['Auth'], summary: 'Tizimdan chiqish', security: [{ BearerAuth: [] }], responses: { 200: { description: 'Muvaffaqiyatli chiqish' } } },
       },
       '/auth/change-password': {
-        put: {
-          tags: ['Auth'],
-          summary: 'Parolni o\'zgartirish',
-          security: [{ BearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: { 'application/json': { schema: { $ref: '#/components/schemas/ChangePasswordRequest' } } },
-          },
-          responses: {
-            200: { description: 'Parol yangilandi', content: { 'application/json': { schema: { $ref: '#/components/schemas/SuccessMessage' } } } },
-            400: { description: 'Eski parol noto\'g\'ri' },
-          },
-        },
+        put: { tags: ['Auth'], summary: "Parolni o'zgartirish", security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/ChangePasswordRequest' } } } }, responses: { 200: { description: 'Parol yangilandi' }, 400: { description: "Eski parol noto'g'ri" } } },
       },
-
-      // ══ ADMINS ════════════════════════════════════════════════════
       '/admins': {
-        get: {
-          tags: ['Admins'],
-          summary: 'Barcha adminlarni olish (superadmin)',
-          security: [{ BearerAuth: [] }],
-          responses: {
-            200: { description: 'Adminlar ro\'yxati', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Admin' } } } } } } },
-          },
-        },
-        post: {
-          tags: ['Admins'],
-          summary: 'Yangi admin yaratish (superadmin)',
-          security: [{ BearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  required: ['fullName', 'email', 'password'],
-                  properties: {
-                    fullName: { type: 'string' },
-                    email: { type: 'string', format: 'email' },
-                    password: { type: 'string', minLength: 6 },
-                  },
-                },
-              },
-            },
-          },
-          responses: {
-            201: { description: 'Admin yaratildi', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Admin' } } } } } },
-          },
-        },
+        get: { tags: ['Admins'], summary: 'Barcha adminlarni olish (superadmin)', security: [{ BearerAuth: [] }], responses: { 200: { description: "Adminlar ro'yxati" } } },
+        post: { tags: ['Admins'], summary: 'Yangi admin yaratish (superadmin)', security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['fullName', 'email', 'password'], properties: { fullName: { type: 'string' }, email: { type: 'string', format: 'email' }, password: { type: 'string', minLength: 6 } } } } } }, responses: { 201: { description: 'Admin yaratildi' } } },
       },
       '/admins/{id}': {
-        get: {
-          tags: ['Admins'],
-          summary: 'ID bo\'yicha admin (superadmin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Admin', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Admin' } } } } } }, 404: { description: 'Topilmadi' } },
-        },
-        put: {
-          tags: ['Admins'],
-          summary: 'Adminni yangilash (superadmin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { fullName: { type: 'string' }, email: { type: 'string' } } } } } },
-          responses: { 200: { description: 'Yangilandi' }, 404: { description: 'Topilmadi' } },
-        },
-        delete: {
-          tags: ['Admins'],
-          summary: 'Adminni o\'chirish (superadmin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'O\'chirildi' }, 404: { description: 'Topilmadi' } },
-        },
+        get: { tags: ['Admins'], summary: "ID bo'yicha admin", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Admin' }, 404: { description: 'Topilmadi' } } },
+        put: { tags: ['Admins'], summary: 'Adminni yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { fullName: { type: 'string' }, email: { type: 'string' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
+        delete: { tags: ['Admins'], summary: "Adminni o'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
       },
       '/admins/{id}/toggle': {
-        patch: {
-          tags: ['Admins'],
-          summary: 'Admin statusini o\'zgartirish (superadmin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Status o\'zgartirildi' } },
-        },
+        patch: { tags: ['Admins'], summary: "Admin statusini o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Status o'zgartirildi" } } },
       },
-
-      // ══ RESTAURANTS ═══════════════════════════════════════════════
       '/restaran': {
-        get: {
-          tags: ['Restaurants'],
-          summary: 'Barcha restoranlarni olish (admin)',
-          security: [{ BearerAuth: [] }],
-          responses: { 200: { description: 'Restoranlar ro\'yxati', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Restaurant' } } } } } } } },
-        },
-        post: {
-          tags: ['Restaurants'],
-          summary: 'Yangi restoran yaratish (admin)',
-          security: [{ BearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: {
-              'multipart/form-data': {
-                schema: {
-                  type: 'object',
-                  required: ['name'],
-                  properties: {
-                    name: { type: 'string' },
-                    description: { type: 'string' },
-                    logo: { type: 'string', format: 'binary' },
-                    banner: { type: 'string', format: 'binary' },
-                  },
-                },
-              },
-            },
-          },
-          responses: { 201: { description: 'Restoran yaratildi' } },
-        },
+        get: { tags: ['Restaurants'], summary: 'Barcha restoranlarni olish', security: [{ BearerAuth: [] }], responses: { 200: { description: "Restoranlar ro'yxati" } } },
+        post: { tags: ['Restaurants'], summary: 'Yangi restoran yaratish', security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name'], properties: { name: { type: 'string' }, description: { type: 'string' }, logo: { type: 'string', format: 'binary' }, banner: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Restoran yaratildi' } } },
       },
       '/restaran/{id}': {
-        get: {
-          tags: ['Restaurants'],
-          summary: 'ID bo\'yicha restoran (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Restoran', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Restaurant' } } } } } }, 404: { description: 'Topilmadi' } },
-        },
-        put: {
-          tags: ['Restaurants'],
-          summary: 'Restoranni yangilash (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, logo: { type: 'string', format: 'binary' }, banner: { type: 'string', format: 'binary' } } } } } },
-          responses: { 200: { description: 'Yangilandi' } },
-        },
-        delete: {
-          tags: ['Restaurants'],
-          summary: 'Restoranni o\'chirish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'O\'chirildi' } },
-        },
+        get: { tags: ['Restaurants'], summary: "ID bo'yicha restoran", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Restoran' }, 404: { description: 'Topilmadi' } } },
+        put: { tags: ['Restaurants'], summary: 'Restoranni yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, logo: { type: 'string', format: 'binary' }, banner: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
+        delete: { tags: ['Restaurants'], summary: "Restoranni o'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
       },
       '/restaran/{id}/qr': {
-        post: {
-          tags: ['Restaurants'],
-          summary: 'QR kod generatsiya qilish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'QR kod yaratildi' } },
-        },
+        post: { tags: ['Restaurants'], summary: 'QR kod generatsiya', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'QR kod yaratildi' } } },
       },
-
-      // ══ CATEGORIES ════════════════════════════════════════════════
       '/categories/restaurants/{restaurantId}': {
-        get: {
-          tags: ['Categories'],
-          summary: 'Restoran kategoriyalarini olish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Kategoriyalar ro\'yxati', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Category' } } } } } } } },
-        },
-        post: {
-          tags: ['Categories'],
-          summary: 'Yangi kategoriya yaratish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name'], properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
-          responses: { 201: { description: 'Kategoriya yaratildi' } },
-        },
+        get: { tags: ['Categories'], summary: 'Restoran kategoriyalari', security: [{ BearerAuth: [] }], parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Kategoriyalar ro'yxati" } } },
+        post: { tags: ['Categories'], summary: 'Yangi kategoriya', security: [{ BearerAuth: [] }], parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name'], properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Kategoriya yaratildi' } } },
       },
       '/categories/{id}': {
-        get: {
-          tags: ['Categories'],
-          summary: 'ID bo\'yicha kategoriya (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Kategoriya' }, 404: { description: 'Topilmadi' } },
-        },
-        put: {
-          tags: ['Categories'],
-          summary: 'Kategoriyani yangilash (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
-          responses: { 200: { description: 'Yangilandi' } },
-        },
-        delete: {
-          tags: ['Categories'],
-          summary: 'Kategoriyani o\'chirish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'O\'chirildi' } },
-        },
+        get: { tags: ['Categories'], summary: "ID bo'yicha kategoriya", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Kategoriya' }, 404: { description: 'Topilmadi' } } },
+        put: { tags: ['Categories'], summary: 'Kategoriyani yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
+        delete: { tags: ['Categories'], summary: "Kategoriyani o'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
       },
       '/categories/{id}/toggle': {
-        patch: {
-          tags: ['Categories'],
-          summary: 'Kategoriya statusini o\'zgartirish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Status o\'zgartirildi' } },
-        },
+        patch: { tags: ['Categories'], summary: "Kategoriya statusini o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Status o'zgartirildi" } } },
       },
-
-      // ══ MENU ITEMS ════════════════════════════════════════════════
       '/menu/categories/{categoryId}': {
-        get: {
-          tags: ['Menu'],
-          summary: 'Kategoriya taomlarini olish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Taomlar ro\'yxati', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/MenuItem' } } } } } } } },
-        },
-        post: {
-          tags: ['Menu'],
-          summary: 'Yangi taom yaratish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: {
-            required: true,
-            content: {
-              'multipart/form-data': {
-                schema: {
-                  type: 'object',
-                  required: ['name', 'price'],
-                  properties: {
-                    name: { type: 'string' },
-                    description: { type: 'string' },
-                    price: { type: 'number' },
-                    weight: { type: 'string' },
-                    calories: { type: 'string' },
-                    image: { type: 'string', format: 'binary' },
-                  },
-                },
-              },
-            },
-          },
-          responses: { 201: { description: 'Taom yaratildi' } },
-        },
+        get: { tags: ['Menu'], summary: 'Kategoriya taomları', security: [{ BearerAuth: [] }], parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Taomlar ro'yxati" } } },
+        post: { tags: ['Menu'], summary: 'Yangi taom yaratish', security: [{ BearerAuth: [] }], parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name', 'price'], properties: { name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Taom yaratildi' } } },
       },
       '/menu/{id}': {
-        get: {
-          tags: ['Menu'],
-          summary: 'ID bo\'yicha taom (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Taom', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/MenuItem' } } } } } }, 404: { description: 'Topilmadi' } },
-        },
-        put: {
-          tags: ['Menu'],
-          summary: 'Taomni yangilash (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } },
-          responses: { 200: { description: 'Yangilandi' } },
-        },
-        delete: {
-          tags: ['Menu'],
-          summary: 'Taomni o\'chirish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'O\'chirildi' } },
-        },
+        get: { tags: ['Menu'], summary: "ID bo'yicha taom", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Taom' }, 404: { description: 'Topilmadi' } } },
+        put: { tags: ['Menu'], summary: 'Taomni yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
+        delete: { tags: ['Menu'], summary: "Taomni o'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
       },
       '/menu/{id}/toggle': {
-        patch: {
-          tags: ['Menu'],
-          summary: 'Taom mavjudligini o\'zgartirish (admin)',
-          security: [{ BearerAuth: [] }],
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Status o\'zgartirildi' } },
-        },
+        patch: { tags: ['Menu'], summary: "Taom mavjudligini o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Status o'zgartirildi" } } },
       },
-
-      // ══ PUBLIC ════════════════════════════════════════════════════
       '/public/menu/{restaurantId}': {
-        get: {
-          tags: ['Public'],
-          summary: 'Ommaviy menyu (token talab qilinmaydi)',
-          parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Restoran menyusi' } },
-        },
+        get: { tags: ['Public'], summary: 'Ommaviy menyu (token kerak emas)', parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Restoran menyusi' } } },
       },
       '/public/menu/{restaurantId}/categories': {
-        get: {
-          tags: ['Public'],
-          summary: 'Ommaviy kategoriyalar (token talab qilinmaydi)',
-          parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }],
-          responses: { 200: { description: 'Kategoriyalar ro\'yxati' } },
-        },
+        get: { tags: ['Public'], summary: 'Ommaviy kategoriyalar (token kerak emas)', parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Kategoriyalar ro'yxati" } } },
       },
     },
   },
@@ -493,7 +208,16 @@ const options = {
 
 const swaggerSpec = swaggerJsdoc(options);
 
+// ✅ CDN ishlatiladi — Vercel va localhost ikkalasida ham ishlaydi
+const swaggerUiOptions = {
+  customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css',
+  customJs: [
+    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js',
+    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js',
+  ],
+};
+
 export const setupSwagger = (app) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
   console.log(`Swagger UI: ${config.BASE_URL}/api-docs`);
 };
