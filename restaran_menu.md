@@ -128,6 +128,17 @@ public      →  Token shart emas (QR skanerlagan mijozlar)
 
 ---
 
+## 📮 Postman Collection — import qilish
+
+1. **Postman** ilovasini yoki brauzer versiyasini oching
+2. Collection ro'yxatida **uchta nuqta (⋯)** belgisiga bosing
+3. **Import** tugmasini tanlang
+4. Ochilgan oynaga `qr_restaran_menu_postman_collection.json` faylini tashlang (drag & drop yoki fayl tanlash orqali)
+
+> Collection versiyasi: **v2.1** — Postman va Insomnia da ishlaydi.
+
+---
+
 ## 📊 Flowchart diagrammasini ko'rish
 
 VS Code da `flowchart.mmd` faylini ochib, quyidagi buyruqni bajaring:
