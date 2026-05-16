@@ -1,37 +1,67 @@
-# THIS IS QR RESTARAN MENU 
-.md — это краткая шпаргалка и руководство пользователя, которая всегда лежит под рукой в корне проекта.
+# 🍽️ QR Restoran Menu — Backend API
 
-# Backend Server Base URL 
-base url - http://localhost:8000
+> Bu fayл — loyiha bo'yicha qisqacha qo'llanma. Doim loyiha ildizida saqlanadi.
 
-# Swagger UI Opening URL 
-swagger url - http://localhost:8000/api-docs/
+---
 
-# QR RESTRAN MENU STARTING PROCESS
+## 🌐 Asosiy URL manzillar
 
-npm run seed - for creating first (super admin)
-npm run dev - for starting server
+| Maqsad | URL |
+|---|---|
+| **Backend Server** | `http://localhost:8000` |
+| **Swagger UI** | `http://localhost:8000/api-docs/` |
 
-# THIS BACKEND PROGRAM - NODE PACKAGE MODULE
+---
 
-bcryptjs - FOR HASHING AND COMPARE PASSWORD
-cors - FOR CONNECTION FRONTEND AND BACKEND
-dotenv - FOR SEEN AND WATCHING AND NORMAL WORKING WITH .ENV FILE
-express - EXTENSIONS FOR NODE JS
-joi - FOR VALIDATION SCHEMA
-jsonwebtoken - FOR WORKING WITH JWT - WITH JWT WE WORKING WITH AUTH_N (Authentication) AND AUTH_Z (Authorization) 
-mongoose - FOR WORKING WITH MONGODB
-multer - FOR WORKING WITH UPLOAD FILE AND IMAGES
-qrcode - FOR GENERATION QR CODE
-swagger-jsdoc - FOR SWAGGER
-swagger-ui-express - FOR SWAGGER
+## 🚀 Loyihani ishga tushirish
 
+```bash
+# 1. Paketlarni o'rnatish
+npm install
 
-# WITH THIS KEYBOORD COMMAND YOU WATCHING BACKEND FLOWCHART DESIGN
-CTRL + SHIFT + P: MermaidChat: Preview Diagram
+# 2. Dastlabki SuperAdmin yaratish
+npm run seed
 
-# QR Restaran Menu Backend - file struckture
+# 3. Serverni ishga tushirish (development)
+npm run dev
+```
 
+---
+
+## ⚙️ MongoDB URL sozlash
+
+`.env` faylidagi `MONGO_URL` — bu MongoDB ulanish manzili.  
+U yerda standart URL turadi. Siz uni o'z MongoDB URL manzilingizga almashtiring.
+
+```env
+MONGO_URL=your_mongodb_url_here
+```
+
+> **Yangi URL olish:** MongoDB Atlas saytiga kiring yoki AI yordamida yangi URL oling.
+
+---
+
+## 📦 O'rnatilgan paketlar
+
+| Paket | Vazifasi |
+|---|---|
+| `bcryptjs` | Parolni xashlash va solishtirish |
+| `cors` | Frontend va backend ulanishi |
+| `dotenv` | `.env` fayl bilan ishlash |
+| `express` | Node.js uchun web framework |
+| `joi` | Ma'lumot validatsiyasi |
+| `jsonwebtoken` | JWT — Autentifikatsiya (AuthN) va Avtorizatsiya (AuthZ) |
+| `mongoose` | MongoDB bilan ishlash (ODM) |
+| `multer` | Fayl va rasm yuklash |
+| `qrcode` | QR kod generatsiya qilish |
+| `swagger-jsdoc` | Swagger dokumentatsiyasi |
+| `swagger-ui-express` | Swagger UI interfeysi |
+
+---
+
+## 🗂️ Fayl tuzilmasi
+
+```bash
 b-menu/
 ├── app.js                          # Asosiy entry point
 ├── package.json
@@ -43,7 +73,7 @@ b-menu/
 ├── .gitignore
 ├── flowchart.mmd                   # Mermaid diagrammasi
 ├── qr_restaran_menu_postman_collection.json
-├── restaran_menu.txt
+├── README.md
 ├── uploads/                        # Yuklangan fayllar
 │   ├── images/
 │   └── qr/
@@ -84,3 +114,24 @@ b-menu/
         ├── categoryValidator.js
         ├── menuValidator.js
         └── restaurantValidator.js
+```
+
+---
+
+## 🔐 Rol tizimi
+
+```bash
+superadmin  →  Adminlarni boshqaradi
+admin       →  O'z restoroni, kategoriyalari va taomlarini boshqaradi
+public      →  Token shart emas (QR skanerlagan mijozlar)
+```
+
+---
+
+## 📊 Flowchart diagrammasini ko'rish
+
+VS Code da `flowchart.mmd` faylini ochib, quyidagi buyruqni bajaring:
+
+```bash
+CTRL + SHIFT + P  →  MermaidChat: Preview Diagram
+```
