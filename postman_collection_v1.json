@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "QR Restoran Menyu API - To'liq",
-    "description": "QR Restoran Menyu Backend - SuperAdmin va Admin uchun to'liq collection",
+    "name": "QR Restoran Menyu API - To'liq v2.0",
+    "description": "QR Restoran Menyu Tizimi - SuperAdmin va Admin uchun to'liq Postman Collection",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -33,7 +33,7 @@
                   "    const res = pm.response.json();",
                   "    pm.environment.set('TOKEN', res.accessToken);",
                   "    pm.environment.set('REFRESH_TOKEN', res.refreshToken);",
-                  "    console.log('✅ Super Admin Token saqlandi');",
+                  "    console.log('✅ Super Admin Token va Refresh Token saqlandi');",
                   "}"
                 ]
               }
@@ -65,7 +65,7 @@
                   "    const res = pm.response.json();",
                   "    pm.environment.set('ADMIN_TOKEN', res.accessToken);",
                   "    pm.environment.set('ADMIN_REFRESH_TOKEN', res.refreshToken);",
-                  "    console.log('✅ Admin Token saqlandi');",
+                  "    console.log('✅ Admin Token va Refresh Token saqlandi');",
                   "}"
                 ]
               }
@@ -73,7 +73,7 @@
           ]
         },
         {
-          "name": "POST Refresh Token (Super)",
+          "name": "🔄 Refresh Token (Super Admin)",
           "request": {
             "method": "POST",
             "header": [
@@ -90,7 +90,7 @@
           }
         },
         {
-          "name": "POST Refresh Token (Admin)",
+          "name": "🔄 Refresh Token (Admin)",
           "request": {
             "method": "POST",
             "header": [
@@ -107,7 +107,7 @@
           }
         },
         {
-          "name": "GET Me (Super Admin)",
+          "name": "👤 Get Me (Super Admin)",
           "request": {
             "method": "GET",
             "header": [
@@ -120,7 +120,7 @@
           }
         },
         {
-          "name": "GET Me (Admin)",
+          "name": "👤 Get Me (Admin)",
           "request": {
             "method": "GET",
             "header": [
@@ -133,7 +133,7 @@
           }
         },
         {
-          "name": "POST Logout",
+          "name": "🚪 Logout",
           "request": {
             "method": "POST",
             "header": [
@@ -151,7 +151,7 @@
       "name": "👤 Admins (Super Admin)",
       "item": [
         {
-          "name": "GET All Admins",
+          "name": "Get All Admins",
           "request": {
             "method": "GET",
             "header": [
@@ -164,7 +164,7 @@
           }
         },
         {
-          "name": "POST Create Admin",
+          "name": "Create Admin",
           "request": {
             "method": "POST",
             "header": [
@@ -185,7 +185,7 @@
           }
         },
         {
-          "name": "GET Admin by ID",
+          "name": "Get Admin by ID",
           "request": {
             "method": "GET",
             "header": [
@@ -198,7 +198,7 @@
           }
         },
         {
-          "name": "PUT Update Admin",
+          "name": "Update Admin",
           "request": {
             "method": "PUT",
             "header": [
@@ -219,7 +219,7 @@
           }
         },
         {
-          "name": "DELETE Admin",
+          "name": "Delete Admin",
           "request": {
             "method": "DELETE",
             "header": [
@@ -232,7 +232,7 @@
           }
         },
         {
-          "name": "PATCH Toggle Admin",
+          "name": "Toggle Admin",
           "request": {
             "method": "PATCH",
             "header": [
@@ -250,7 +250,7 @@
       "name": "🏪 Restaurants",
       "item": [
         {
-          "name": "GET My Restaurants",
+          "name": "My Restaurants",
           "request": {
             "method": "GET",
             "header": [
@@ -263,7 +263,7 @@
           }
         },
         {
-          "name": "POST Create Restaurant",
+          "name": "Create Restaurant",
           "request": {
             "method": "POST",
             "header": [
@@ -284,6 +284,11 @@
                   "key": "description",
                   "value": "Tavsif",
                   "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "Toshkent, Chilonzor",
+                  "type": "text"
                 }
               ]
             },
@@ -291,20 +296,7 @@
           }
         },
         {
-          "name": "GET Restaurant by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{ADMIN_TOKEN}}"
-              }
-            ],
-            "url": "{{BASE_URL}}/restaran/{{restaurantId}}"
-          }
-        },
-        {
-          "name": "POST Generate QR Code",
+          "name": "Generate QR Code",
           "request": {
             "method": "POST",
             "header": [
@@ -322,7 +314,7 @@
       "name": "📂 Categories",
       "item": [
         {
-          "name": "GET Categories by Restaurant",
+          "name": "Categories",
           "request": {
             "method": "GET",
             "header": [
@@ -335,7 +327,7 @@
           }
         },
         {
-          "name": "POST Create Category",
+          "name": "Create Category",
           "request": {
             "method": "POST",
             "header": [
@@ -349,7 +341,7 @@
               "formdata": [
                 {
                   "key": "name",
-                  "value": "Burger",
+                  "value": "Burgerlar",
                   "type": "text"
                 }
               ]
@@ -358,7 +350,7 @@
           }
         },
         {
-          "name": "PATCH Toggle Category",
+          "name": "Toggle Category",
           "request": {
             "method": "PATCH",
             "header": [
@@ -376,7 +368,7 @@
       "name": "🍔 Menu Items",
       "item": [
         {
-          "name": "GET Menu by Category",
+          "name": "Menu Items",
           "request": {
             "method": "GET",
             "header": [
@@ -389,7 +381,7 @@
           }
         },
         {
-          "name": "POST Create Menu Item",
+          "name": "Create Menu Item",
           "request": {
             "method": "POST",
             "header": [
@@ -417,7 +409,7 @@
           }
         },
         {
-          "name": "PATCH Toggle Menu Item",
+          "name": "Toggle Menu Item",
           "request": {
             "method": "PATCH",
             "header": [
@@ -435,7 +427,7 @@
       "name": "🌍 Public",
       "item": [
         {
-          "name": "GET Public Menu",
+          "name": "Public Menu",
           "request": {
             "method": "GET",
             "url": "{{BASE_URL}}/public/menu/{{restaurantId}}"
@@ -448,6 +440,46 @@
     {
       "key": "BASE_URL",
       "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "REFRESH_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_REFRESH_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "restaurantId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "menuId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminId",
+      "value": "",
       "type": "string"
     }
   ]

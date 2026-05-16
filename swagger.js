@@ -1,133 +1,222 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import config from './src/shared/config.js';
 
-const options = {
+const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
       title: 'QR Restoran Menyu API',
-      version: '1.0.0',
-      description: 'Restoran menyu tizimi uchun REST API dokumentatsiyasi',
+      version: '2.0.0',
+      description: 'Restoran uchun QR kodli menyu tizimi - to‘liq backend API',
+      contact: {
+        name: 'Ibrogim',
+        email: 'your@email.com',
+      },
     },
-    servers: [{ url: config.BASE_URL, description: 'Server' }],
+    servers: [
+      {
+        url: config.BASE_URL || 'http://localhost:8000',
+        description: 'Local Development Server',
+      },
+      {
+        url: 'https://restaran-menu-backend.vercel.app',
+        description: 'Production Server (Vercel)',
+      },
+    ],
     components: {
       securitySchemes: {
-        BearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT Tokenni quyidagicha kiriting: Bearer <token>',
+        },
       },
       schemas: {
-        LoginRequest: { type: 'object', required: ['email', 'password'], properties: { email: { type: 'string', format: 'email', example: 'admin@example.com' }, password: { type: 'string', minLength: 6, example: 'password123' } } },
-        LoginResponse: { type: 'object', properties: { success: { type: 'boolean' }, accessToken: { type: 'string' }, refreshToken: { type: 'string' } } },
-        ChangePasswordRequest: { type: 'object', required: ['oldPassword', 'newPassword'], properties: { oldPassword: { type: 'string' }, newPassword: { type: 'string' } } },
-        Restaurant: { type: 'object', properties: { _id: { type: 'string' }, name: { type: 'string' }, description: { type: 'string' }, logoUrl: { type: 'string' }, bannerUrl: { type: 'string' }, isActive: { type: 'boolean' } } },
-        Category: { type: 'object', properties: { _id: { type: 'string' }, restaurantId: { type: 'string' }, name: { type: 'string' }, imageUrl: { type: 'string' }, isActive: { type: 'boolean' }, orderIndex: { type: 'number' } } },
-        MenuItem: { type: 'object', properties: { _id: { type: 'string' }, categoryId: { type: 'string' }, name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, isAvailable: { type: 'boolean' } } },
-        Admin: { type: 'object', properties: { _id: { type: 'string' }, fullName: { type: 'string' }, email: { type: 'string' }, role: { type: 'string', enum: ['admin', 'superadmin'] }, isActive: { type: 'boolean' } } },
-        SuccessMessage: { type: 'object', properties: { success: { type: 'boolean', example: true }, message: { type: 'string' } } },
-        ErrorResponse: { type: 'object', properties: { success: { type: 'boolean', example: false }, message: { type: 'string' } } },
+        LoginRequest: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email', example: 'superadmin@qrmenu.uz' },
+            password: { type: 'string', example: '123456', minLength: 6 },
+          },
+        },
+        Restaurant: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            address: { type: 'string' },
+            phone: { type: 'string' },
+            logoUrl: { type: 'string' },
+            coverUrl: { type: 'string' },
+            isActive: { type: 'boolean', default: true },
+            qrCodeUrl: { type: 'string' },
+          },
+        },
+        Category: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            restaurantId: { type: 'string' },
+            name: { type: 'string' },
+            imageUrl: { type: 'string' },
+            isActive: { type: 'boolean', default: true },
+            orderIndex: { type: 'number', default: 0 },
+          },
+        },
+        MenuItem: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            categoryId: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            price: { type: 'number', minimum: 0 },
+            imageUrl: { type: 'string' },
+            weight: { type: 'string' },
+            calories: { type: 'string' },
+            isAvailable: { type: 'boolean', default: true },
+            isPopular: { type: 'boolean', default: false },
+          },
+        },
       },
     },
     paths: {
-      '/auth/login': { post: { tags: ['Auth'], summary: 'Tizimga kirish', requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/LoginRequest' } } } }, responses: { 200: { description: 'Muvaffaqiyatli' }, 401: { description: "Noto'g'ri ma'lumotlar" } } } },
-      '/auth/refresh': { post: { tags: ['Auth'], summary: 'Token yangilash', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { refreshToken: { type: 'string' } } } } } }, responses: { 200: { description: 'Yangi token' } } } },
-      '/auth/me': { get: { tags: ['Auth'], summary: 'Joriy foydalanuvchi', security: [{ BearerAuth: [] }], responses: { 200: { description: 'Foydalanuvchi' } } } },
-      '/auth/logout': { post: { tags: ['Auth'], summary: 'Chiqish', security: [{ BearerAuth: [] }], responses: { 200: { description: 'Chiqildi' } } } },
-      '/auth/change-password': { put: { tags: ['Auth'], summary: "Parol o'zgartirish", security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/ChangePasswordRequest' } } } }, responses: { 200: { description: 'Yangilandi' } } } },
-      '/admins': {
-        get: { tags: ['Admins'], summary: 'Barcha adminlar', security: [{ BearerAuth: [] }], responses: { 200: { description: "Ro'yxat" } } },
-        post: { tags: ['Admins'], summary: 'Admin yaratish', security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['fullName', 'email', 'password'], properties: { fullName: { type: 'string' }, email: { type: 'string' }, password: { type: 'string' } } } } } }, responses: { 201: { description: 'Yaratildi' } } },
+      '/auth/login': {
+        post: {
+          tags: ['Auth'],
+          summary: 'Tizimga kirish',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/LoginRequest' },
+              },
+            },
+          },
+          responses: {
+            200: { description: 'Muvaffaqiyatli kirish' },
+            401: { description: 'Noto‘g‘ri login yoki parol' },
+          },
+        },
       },
-      '/admins/{id}': {
-        get: { tags: ['Admins'], summary: 'Admin', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Admin' }, 404: { description: 'Topilmadi' } } },
-        put: { tags: ['Admins'], summary: 'Yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { fullName: { type: 'string' }, email: { type: 'string' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
-        delete: { tags: ['Admins'], summary: "O'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
+      '/auth/refresh': {
+        post: {
+          tags: ['Auth'],
+          summary: 'Refresh token orqali yangi access token olish',
+        },
       },
-      '/admins/{id}/toggle': { patch: { tags: ['Admins'], summary: "Status o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Yangilandi' } } } },
+      '/auth/me': {
+        get: {
+          tags: ['Auth'],
+          summary: 'Joriy foydalanuvchi ma’lumotlari',
+          security: [{ BearerAuth: [] }],
+        },
+      },
       '/restaran': {
-        get: { tags: ['Restaurants'], summary: 'Barcha restoranlar', security: [{ BearerAuth: [] }], responses: { 200: { description: "Ro'yxat" } } },
-        post: { tags: ['Restaurants'], summary: 'Restoran yaratish', security: [{ BearerAuth: [] }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name'], properties: { name: { type: 'string' }, description: { type: 'string' }, logo: { type: 'string', format: 'binary' }, banner: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Yaratildi' } } },
+        get: { tags: ['Restaurants'], summary: 'Adminning restoranlari', security: [{ BearerAuth: [] }] },
+        post: { tags: ['Restaurants'], summary: 'Yangi restoran yaratish', security: [{ BearerAuth: [] }] },
       },
-      '/restaran/{id}': {
-        get: { tags: ['Restaurants'], summary: 'Restoran', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Restoran' }, 404: { description: 'Topilmadi' } } },
-        put: { tags: ['Restaurants'], summary: 'Yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, logo: { type: 'string', format: 'binary' }, banner: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
-        delete: { tags: ['Restaurants'], summary: "O'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
+      '/restaran/{id}/qr': {
+        post: {
+          tags: ['Restaurants'],
+          summary: 'QR kod generatsiya qilish',
+          security: [{ BearerAuth: [] }],
+        },
       },
-      '/restaran/{id}/qr': { post: { tags: ['Restaurants'], summary: 'QR kod', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'QR yaratildi' } } } },
       '/categories/restaurants/{restaurantId}': {
-        get: { tags: ['Categories'], summary: 'Kategoriyalar', security: [{ BearerAuth: [] }], parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Ro'yxat" } } },
-        post: { tags: ['Categories'], summary: 'Kategoriya yaratish', security: [{ BearerAuth: [] }], parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name'], properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Yaratildi' } } },
+        get: { tags: ['Categories'], summary: 'Restoran kategoriyalari', security: [{ BearerAuth: [] }] },
+        post: { tags: ['Categories'], summary: 'Yangi kategoriya yaratish', security: [{ BearerAuth: [] }] },
       },
-      '/categories/{id}': {
-        get: { tags: ['Categories'], summary: 'Kategoriya', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Kategoriya' }, 404: { description: 'Topilmadi' } } },
-        put: { tags: ['Categories'], summary: 'Yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
-        delete: { tags: ['Categories'], summary: "O'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
-      },
-      '/categories/{id}/toggle': { patch: { tags: ['Categories'], summary: "Status o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Yangilandi' } } } },
       '/menu/categories/{categoryId}': {
-        get: { tags: ['Menu'], summary: 'Taomlari', security: [{ BearerAuth: [] }], parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Ro'yxat" } } },
-        post: { tags: ['Menu'], summary: 'Taom yaratish', security: [{ BearerAuth: [] }], parameters: [{ name: 'categoryId', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', required: ['name', 'price'], properties: { name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 201: { description: 'Yaratildi' } } },
+        get: { tags: ['Menu'], summary: 'Kategoriyadagi taomlar', security: [{ BearerAuth: [] }] },
+        post: { tags: ['Menu'], summary: 'Yangi taom qo‘shish', security: [{ BearerAuth: [] }] },
       },
-      '/menu/{id}': {
-        get: { tags: ['Menu'], summary: 'Taom', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Taom' }, 404: { description: 'Topilmadi' } } },
-        put: { tags: ['Menu'], summary: 'Yangilash', security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], requestBody: { required: true, content: { 'multipart/form-data': { schema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, price: { type: 'number' }, weight: { type: 'string' }, calories: { type: 'string' }, image: { type: 'string', format: 'binary' } } } } } }, responses: { 200: { description: 'Yangilandi' } } },
-        delete: { tags: ['Menu'], summary: "O'chirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "O'chirildi" } } },
+      '/public/menu/{restaurantId}': {
+        get: {
+          tags: ['Public'],
+          summary: 'Ommaviy menyu (QR orqali ochiladigan sahifa)',
+        },
       },
-      '/menu/{id}/toggle': { patch: { tags: ['Menu'], summary: "Mavjudlikni o'zgartirish", security: [{ BearerAuth: [] }], parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Yangilandi' } } } },
-      '/public/menu/{restaurantId}': { get: { tags: ['Public'], summary: 'Ommaviy menyu', parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: 'Menyu' } } } },
-      '/public/menu/{restaurantId}/categories': { get: { tags: ['Public'], summary: 'Ommaviy kategoriyalar', parameters: [{ name: 'restaurantId', in: 'path', required: true, schema: { type: 'string' } }], responses: { 200: { description: "Ro'yxat" } } } },
     },
   },
-  apis: [],
+  apis: ['./src/router/*.js'], // Agar JSDoc qo‘shsangiz avtomatik qo‘shiladi
 };
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 export const setupSwagger = (app) => {
-  // JSON spec
+  // Swagger JSON
   app.get('/api-docs/swagger.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(swaggerSpec);
   });
 
-  // ✅ swagger-ui-express ishlatilmaydi — to'liq o'zimiz HTML yozamiz
-  // Bu Vercel'da swaggerUi.serve muammosini hal qiladi
+  // Zamonaviy Swagger UI sahifasi
   app.get('/api-docs', (req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.send(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>QR Restoran Menyu API</title>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
-  <style>body{margin:0}</style>
-</head>
-<body>
-  <div id="swagger-ui"></div>
-  <script>
-  // CDN dan yuklanadi — Vercel static fayl muammosi yo'q
-  function loadScript(src, cb) {
-    var s = document.createElement('script');
-    s.src = src;
-    s.onload = cb;
-    document.head.appendChild(s);
-  }
-  loadScript('https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js', function() {
-    loadScript('https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js', function() {
-      SwaggerUIBundle({
-        url: '/api-docs/swagger.json',
-        dom_id: '#swagger-ui',
-        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-        layout: 'StandaloneLayout',
-        deepLinking: true,
-        persistAuthorization: true,
-      });
-    });
-  });
-  </script>
-</body>
-</html>`);
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="uz">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>QR Restoran Menyu API Docs</title>
+        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css" />
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+          }
+          #swagger-ui {
+            max-width: 1480px;
+            margin: 0 auto;
+          }
+          .swagger-ui .topbar {
+            background-color: #1e2937;
+          }
+          .swagger-ui .topbar .download-url-wrapper {
+            display: none;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="swagger-ui"></div>
+
+        <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js"></script>
+        <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
+        <script>
+          window.onload = function() {
+            SwaggerUIBundle({
+              url: '/api-docs/swagger.json',
+              dom_id: '#swagger-ui',
+              presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+              ],
+              layout: "StandaloneLayout",
+              deepLinking: true,
+              persistAuthorization: true,
+              displayRequestDuration: true,
+              docExpansion: "list",
+              tryItOutEnabled: true,
+              defaultModelsExpandDepth: 1,
+              syntaxHighlight: {
+                activate: true,
+                theme: "monokai"
+              }
+            });
+          };
+        </script>
+      </body>
+      </html>
+    `);
   });
 
-  console.log('');
-  console.log('Swagger UI: ' + config.BASE_URL + '/api-docs');
+  console.log(`Swagger UI: ${config.BASE_URL}/api-docs`);
+  console.log(`Swagger JSON: ${config.BASE_URL}/api-docs/swagger.json`);
 };

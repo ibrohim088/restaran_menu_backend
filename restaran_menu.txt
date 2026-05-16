@@ -1,8 +1,0 @@
-this is restaran menu project
-
-base url - http://localhost:8000
-swagger url - http://localhost:8000/api-docs/
-
-.md — это краткая шпаргалка и руководство пользователя, которая всегда лежит под рукой в корне проекта.
-
-CTRL + SHIFT + P: MermaidChat: Preview Diagram

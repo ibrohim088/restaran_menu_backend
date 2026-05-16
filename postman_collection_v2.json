@@ -1,0 +1,931 @@
+{
+  "info": {
+    "name": "QR Restoran Menyu API",
+    "description": "QR Restoran Menyu Backend — SuperAdmin va Admin uchun to'liq collection. BASE_URL, TOKEN, ADMIN_TOKEN, restaurantId, categoryId, menuId, adminId o'zgaruvchilari avtomatik saqlanadi.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "REFRESH_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_REFRESH_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "restaurantId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "menuId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "POST Login — SuperAdmin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('TOKEN', res.accessToken);",
+                  "    pm.collectionVariables.set('REFRESH_TOKEN', res.refreshToken);",
+                  "    console.log('✅ SuperAdmin token saqlandi');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/login"
+          }
+        },
+        {
+          "name": "POST Login — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('ADMIN_TOKEN', res.accessToken);",
+                  "    pm.collectionVariables.set('ADMIN_REFRESH_TOKEN', res.refreshToken);",
+                  "    console.log('✅ Admin token saqlandi');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/login"
+          }
+        },
+        {
+          "name": "POST Refresh Token — SuperAdmin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('TOKEN', res.accessToken);",
+                  "    console.log('✅ SuperAdmin access token yangilandi');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{REFRESH_TOKEN}}\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/refresh"
+          }
+        },
+        {
+          "name": "POST Refresh Token — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('ADMIN_TOKEN', res.accessToken);",
+                  "    console.log('✅ Admin access token yangilandi');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{ADMIN_REFRESH_TOKEN}}\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/refresh"
+          }
+        },
+        {
+          "name": "GET Me — SuperAdmin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/me"
+          }
+        },
+        {
+          "name": "GET Me — Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/me"
+          }
+        },
+        {
+          "name": "PUT Change Password — Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"123456\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": "{{BASE_URL}}/auth/change-password"
+          }
+        },
+        {
+          "name": "POST Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Admins (SuperAdmin only)",
+      "item": [
+        {
+          "name": "GET All Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/admins?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "admins"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Create Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('adminId', res.data._id);",
+                  "    console.log('✅ adminId saqlandi:', res.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Test Admin\",\n  \"email\": \"testadmin@qrmenu.uz\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{BASE_URL}}/admins"
+          }
+        },
+        {
+          "name": "GET Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        },
+        {
+          "name": "PUT Update Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Admin Name\",\n  \"email\": \"updated@qrmenu.uz\"\n}"
+            },
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Admin (faollashtirish/o'chirish)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}/toggle"
+          }
+        },
+        {
+          "name": "DELETE Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/admins/{{adminId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏪 Restaurants",
+      "item": [
+        {
+          "name": "GET My Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran"
+          }
+        },
+        {
+          "name": "POST Create Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('restaurantId', res.data._id);",
+                  "    console.log('✅ restaurantId saqlandi:', res.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "My Restoran",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Eng mazali taomlar",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "Toshkent, Chilonzor",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "+998901234567",
+                  "type": "text"
+                },
+                {
+                  "key": "instagram",
+                  "value": "@myrestoran",
+                  "type": "text"
+                },
+                {
+                  "key": "telegram",
+                  "value": "@myrestoran",
+                  "type": "text"
+                },
+                {
+                  "key": "workingHours",
+                  "value": "09:00 - 23:00",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                },
+                {
+                  "key": "cover",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/restaran"
+          }
+        },
+        {
+          "name": "GET Restaurant by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "PUT Update Restaurant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Updated Restoran",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Yangilangan tavsif",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "Toshkent, Yunusobod",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "+998901234567",
+                  "type": "text"
+                },
+                {
+                  "key": "workingHours",
+                  "value": "10:00 - 22:00",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                },
+                {
+                  "key": "cover",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "POST Generate QR Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}/qr"
+          }
+        },
+        {
+          "name": "DELETE Restaurant",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/restaran/{{restaurantId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📂 Categories",
+      "item": [
+        {
+          "name": "GET Categories by Restaurant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/restaurants/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "POST Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('categoryId', res.data._id);",
+                  "    console.log('✅ categoryId saqlandi:', res.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Burgerlar",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Tez taomlar",
+                  "type": "text"
+                },
+                {
+                  "key": "orderIndex",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/categories/restaurants/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "GET Category by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "PUT Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Yangi nom",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Tavsif",
+                  "type": "text"
+                },
+                {
+                  "key": "orderIndex",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/{{categoryId}}/toggle"
+          }
+        },
+        {
+          "name": "DELETE Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/categories/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🍔 Menu Items",
+      "item": [
+        {
+          "name": "GET Menu Items by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "POST Create Menu Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('menuId', res.data._id);",
+                  "    console.log('✅ menuId saqlandi:', res.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Cheese Burger",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Mazali burger",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "45000",
+                  "type": "text"
+                },
+                {
+                  "key": "weight",
+                  "value": "350g",
+                  "type": "text"
+                },
+                {
+                  "key": "calories",
+                  "value": "650 kcal",
+                  "type": "text"
+                },
+                {
+                  "key": "isPopular",
+                  "value": "false",
+                  "type": "text"
+                },
+                {
+                  "key": "orderIndex",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/menu/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "GET Menu Item by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/{{menuId}}"
+          }
+        },
+        {
+          "name": "PUT Update Menu Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Double Burger",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Yangilangan tavsif",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "55000",
+                  "type": "text"
+                },
+                {
+                  "key": "weight",
+                  "value": "450g",
+                  "type": "text"
+                },
+                {
+                  "key": "calories",
+                  "value": "800 kcal",
+                  "type": "text"
+                },
+                {
+                  "key": "isPopular",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "orderIndex",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{BASE_URL}}/menu/{{menuId}}"
+          }
+        },
+        {
+          "name": "PATCH Toggle Menu Item Availability",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/{{menuId}}/toggle"
+          }
+        },
+        {
+          "name": "DELETE Menu Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": "{{BASE_URL}}/menu/{{menuId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌍 Public (token shart emas)",
+      "item": [
+        {
+          "name": "GET Public Menu (restoran + kategoriyalar + taomlar)",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/public/menu/{{restaurantId}}"
+          }
+        },
+        {
+          "name": "GET Public Categories by Restaurant",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/public/menu/{{restaurantId}}/categories"
+          }
+        }
+      ]
+    }
+  ]
+}
